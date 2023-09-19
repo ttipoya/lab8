@@ -1,25 +1,16 @@
-#Требуется для своего варианта второй части л.р. №6 (усложненной программы) или ее объектно-ориентированной реализации (л.р. №7) 
-#разработать реализацию с использованием графического интерфейса.Допускается использовать любую графическую библиотеку питона. 
-#Рекомендуется использовать внутреннюю библиотеку питона tkinter. 
-#В программе должны быть реализованы минимум одно окно ввода, одно окно вывода, текстовое поле, кнопка.
-
-#Вариант 28. Фирма занимается сборкой компьютеров. В компьютере компоненты N типов. 
-#На складе находятся компоненты разных компаний. Количество компаний К1, К2, … КN. 
-#Сформировать все возможные варианты комплектации компьютеров.
-
-
 from itertools import product
 from random import randint
 import re
 from tkinter import *
 from tkinter import ttk
+import sys
 
 root = Tk()
 root.title("METANIT.COM")
 root.geometry("600x500")
 prove = True
 clicks = 0
-
+sys.setrecursionlimit(10000)
 class KOMPLEK_ZHENA:
     def __init__(self):
         self.col_el = N.get()
@@ -42,8 +33,6 @@ class KOMPLEK_ZHENA:
             label = ttk.Label(text=('K' + str(i) + '=' + str(self.cena[i - 1])))
             label.place(x=n, y=290)
             n += 50
-        print()
-        print("---------------------------")
         return
 
 
@@ -103,8 +92,8 @@ def click_button():
 
 def is_valid(newval):
     result = re.match("^[0-9]{0,11}$", newval) is not None
-    if not result and len(newval) <= 12 or (len(newval) == 1 and int(newval) <= 2) or (
-            len(newval) >= 1 and newval[0] == '0') or (len(newval) == 0):
+    if (not result and len(newval) <= 12 or (len(newval) == 1 and int(newval) <= 2) or (len(newval) == 1 and int(newval) > 6) or
+            (len(newval) >= 1 and newval[0] == '0') or (len(newval) == 0)):
         errmsg.set("Некорректные значения")
         button.configure(state=DISABLED)
     else:
@@ -124,23 +113,35 @@ def is_valid1(newval):
         errmsg.set("")
     return result
 
+def is_valid2(newval):
+    result = re.match("^[0-9]{0,11}$", newval) is not None
+    if not result and len(newval) <= 12 or (len(newval) == 1 and newval == '0') or (
+            len(newval) >= 1 and newval[0] == '0') or (len(newval) == 0):
+        errmsg.set("Некорректные значения")
+        button.configure(state=DISABLED)
+    else:
+        button.configure(state=NORMAL)
+        errmsg.set("")
+    return result
+
 
 check = (root.register(is_valid), "%P")
 check1 = (root.register(is_valid1), "%P")
+check2 = (root.register(is_valid2), "%P")
 
-label = ttk.Label(text='Введите кол-во комплектующих (больше 2)')
+label = ttk.Label(text='Введите кол-во комплектующих (больше 2 и не больше 6)')
 label.place(x=0, y=0)
 entry = ttk.Entry(validate="key", validatecommand=check, textvariable=N)
 entry.place(x=0, y=25)
 
-label = ttk.Label(text='Введите минимальную цену(неотрицательную и больше одной цифры): ')
+label = ttk.Label(text='Введите минимальную цену(неотрицательную): ')
 label.place(x=0, y=50)
-entry = ttk.Entry(validate="key", validatecommand=check, textvariable=mini)
+entry = ttk.Entry(validate="key", validatecommand=check2, textvariable=mini)
 entry.place(x=0, y=75)
 
-label = ttk.Label(text='Введите максимальную цену(неотрицательную и больше одной цифры): ')
+label = ttk.Label(text='Введите максимальную цену(неотрицательную и больше минимальной): ')
 label.place(x=0, y=100)
-entry = ttk.Entry(validate="key", validatecommand=check, textvariable=maxi)
+entry = ttk.Entry(validate="key", validatecommand=check2, textvariable=maxi)
 entry.place(x=0, y=125)
 
 label = ttk.Label(text='Введите число повторяющихся элементов не меньше 1: ')
