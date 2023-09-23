@@ -59,6 +59,7 @@ mini = IntVar()
 maxi = IntVar()
 result = IntVar()
 errmsg = StringVar()
+nugh = IntVar()
 
 def click_button():
     global clicks
